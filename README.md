@@ -9,5 +9,6 @@ THINGS TO DO:
   - [ ] Create Client Server system with TCP in python for host Trained NN on Server and pass commands to client
   - [ ] Create RPi python script for controlling motors
   - [ ] Adjust motors script to recive commands from server and control motors accurately
-  ... More to do
+
+... More to do
   
