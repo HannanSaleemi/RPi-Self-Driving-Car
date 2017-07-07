@@ -2,9 +2,9 @@
 Raspberry pi based RC Self-Driving Car using Python, Keras, Tenserflow and OpenCV
 
 THINGS TO DO:
-  - [X] Don't upload dataset to GitHub
-  - [X] Test Model with simple images - VERIFIED WORKING
-  - [ ] Report on first models accuracy on training and test set
+  - [X] Don't upload dataset to GitHub :white_check_mark:
+  - [X] Test Model with simple images - VERIFIED WORKING 84% Accuracy :white_check_mark:
+  - [ ] Imporve Accuracy of model - shuffle pictures in random order / change parameters
   - [ ] Test Model with a live video feed
   - [ ] Create Client Server system with TCP in python for host Trained NN on Server and pass commands to client
   - [ ] Create RPi python script for controlling motors
