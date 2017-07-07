@@ -4,6 +4,7 @@ Raspberry pi based RC Self-Driving Car using Python, Keras, Tenserflow and OpenC
 THINGS TO DO:
   - [X] Don't upload dataset to GitHub :white_check_mark:
   - [X] Test Model with simple images - VERIFIED WORKING 84% Accuracy :white_check_mark:
+  - [X] Simple send and recive / Client and server python script to send an image over TCP
   - [ ] Imporve Accuracy of model - shuffle pictures in random order / change parameters
   - [ ] Test Model with a live video feed
   - [ ] Create Client Server system with TCP in python for host Trained NN on Server and pass commands to client
