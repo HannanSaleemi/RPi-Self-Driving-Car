@@ -18,7 +18,7 @@ print("Staring...")
 
 while True:
     ret, frame = cam.read()
-    cv2.imshow("test", frame)
+    cv2.imshow("Frames", frame)
     if not ret:
         break
     k = cv2.waitKey(1)
