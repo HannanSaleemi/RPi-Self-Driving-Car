@@ -37,7 +37,9 @@ while True:
     for (x, y, w, h) in faces:
         #Create a green rectange around the face, with a border width of 2
         cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
-
+        #Display text to show shtop sign
+        cv2.putText(frame, "STOP", (x-10, y-10), cv2.FONT_HERSHEY_PLAIN, 3, (0,0,255), 2)
+        
     #Display the video stream with the squares draw on
     cv2.imshow('Video', frame)
 
