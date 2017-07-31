@@ -8,10 +8,11 @@ THINGS TO DO:
     - [X] Model tested with STATIC images [NOT LIVE] and accuracy of each test is written in comments of the code
   - [X] Simple send and recive / Client and server python script to send an image over TCP :white_check_mark:
     - [X] Client Server code imporved to be quicker in uploading and downloading
-  - [ ] Improve Accuracy of model - shuffle pictures in random order / change parameters
+  - [X] Haar Cascade: Train Stop Sign Cascade and do a simple test with the webcam :white_check_mark:
+  - [ ] Improve Accuracy of model - shuffle pictures in random order / change parameters / make model simpler
   - [ ] Test Model with a live video feed
   - [ ] Create Client Server system with TCP in python for host Trained NN on Server and pass commands to client 
-  - [ ] Create RPi python script for controlling motors
+  - [ ] Create RPi python script for controlling motors by sending commands to Arduino
   - [ ] Adjust motors script to recive commands from server and control motors accurately
 
 ... More to do
