@@ -3,16 +3,16 @@ import socket
 
 s = socket.socket()         
                
-s.connect(('192.168.0.19', '8081'))
-f = open('tosend.png','rb')
+s.connect(('localhost', 12346))
+f = open('/Users/intern.mac/Desktop/RPi-Self-Driving-Car/Client-Server Test/tosend.png','rb')
 print('Sending...')
-l = f.read(1024)
+l = f.read(90024)
 while (l):
     print('Sending...')
     s.send(l)
-    l = f.read(1024)
+    l = f.read(90024)
 f.close()
 print("Done Sending")
 s.shutdown(socket.SHUT_WR)
-print(s.recv(1024))
+print(s.recv(90024))
 s.close()
