@@ -1,18 +1,17 @@
-# CHANGE FILE AS IT IS TAKEN FROM STACKOVERFLOW [PLAGARISM]
 import socket              
 
 s = socket.socket()         
                
-s.connect(('localhost', 12346))
+s.connect(('localhost', 12347))
 f = open('/Users/intern.mac/Desktop/RPi-Self-Driving-Car/Client-Server Test/tosend.png','rb')
 print('Sending...')
-l = f.read(90024)
+l = f.read(150000)
 while (l):
     print('Sending...')
     s.send(l)
-    l = f.read(90024)
+    l = f.read(150000)
 f.close()
 print("Done Sending")
 s.shutdown(socket.SHUT_WR)
-print(s.recv(90024))
+print(s.recv(150000))
 s.close()
