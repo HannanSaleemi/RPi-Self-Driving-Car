@@ -15,3 +15,9 @@ https://github.com/mrnugget/opencv-haar-classifier-training
 http://www.pyimagesearch.com/2016/06/20/detecting-cats-in-images-with-opencv/    ->  Explaination will be pretty good here
 
 http://note.sonots.com/SciSoftware/haartraining.html
+
+https://www.youtube.com/watch?v=eay7CgPlCyo   -> May be really informative
+
+http://memememememememe.me/post/training-haar-cascades/
+
+
