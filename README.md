@@ -9,6 +9,7 @@ THINGS TO DO:
   - [X] Simple send and recive / Client and server python script to send an image over TCP :white_check_mark:
     - [X] Client Server code imporved to be quicker in uploading and downloading
   - [X] Haar Cascade: Train Stop Sign Cascade and do a simple test with the webcam :white_check_mark:
+  - [X] Test simple live feed frame send from client to server
   - [ ] Improve Accuracy of model - shuffle pictures in random order / change parameters / make model simpler
   - [ ] Test Model with a live video feed
   - [ ] Create Client Server system with TCP in python for host Trained NN on Server and pass commands to client 
