@@ -1,20 +1,15 @@
 # RPi-Self-Driving-Car
-Raspberry pi based RC Self-Driving Car using Python, Keras, Tenserflow and OpenCV
+Raspberry pi based RC Self-Driving Car using Python, Tenserflow and OpenCV
 
-THINGS TO DO:
-  - [X] Don't upload dataset to GitHub :white_check_mark:
-  - [X] Test Model with simple images - VERIFIED WORKING 84% Accuracy :white_check_mark:
-    - [X] New SIMPLE CNN model - Working with 87% Accuracy
-    - [X] Model tested with STATIC images [NOT LIVE] and accuracy of each test is written in comments of the code
-  - [X] Simple send and recive / Client and server python script to send an image over TCP :white_check_mark:
-    - [X] Client Server code imporved to be quicker in uploading and downloading
-  - [X] Haar Cascade: Train Stop Sign Cascade and do a simple test with the webcam :white_check_mark:
-  - [X] Test simple live feed frame send from client to server
-  - [ ] Improve Accuracy of model - shuffle pictures in random order / change parameters / make model simpler
-  - [ ] Test Model with a live video feed
-  - [ ] Create Client Server system with TCP in python for host Trained NN on Server and pass commands to client 
-  - [ ] Create RPi python script for controlling motors by sending commands to Arduino
-  - [ ] Adjust motors script to recive commands from server and control motors accurately
-
-... More to do
+Checklist:
+  - [X] Transfer from Keras to TensorFlow
+  - [X] Create ANN model - 98% accuracy
+  - [X] Test ANN model
+  - [X] Stop Sign Haar Cascade
+  - [ ] Traffic Light Haar Cascade
+  - [ ] Create CNN model
+  - [ ] Test CNN model
+  - [ ] Test client-server with both new models
+  - [ ] Figure out whether your using Raspberry Pi or Arduino for Interfacing
+  - [ ] Web Page or GUI for dashboard
   
