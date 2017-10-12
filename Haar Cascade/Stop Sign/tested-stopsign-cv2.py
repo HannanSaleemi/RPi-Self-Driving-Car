@@ -3,8 +3,10 @@ import sys
 
 #Importing the trained cascade file
 cascFile = "stop_class.xml"
+
 #Setting the cascade file
 stopCascade = cv2.CascadeClassifier(cascFile)
+
 
 #Set the device to capture video frames from
 #In this case, the webcam
@@ -38,7 +40,8 @@ while True:
         cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
         #Display text to show shtop sign
         cv2.putText(frame, "STOP", (x-10, y-10), cv2.FONT_HERSHEY_PLAIN, 3, (0,0,255), 2)
-        
+
+    
     #Display the video stream with the squares draw on
     cv2.imshow('Video', frame)
 
