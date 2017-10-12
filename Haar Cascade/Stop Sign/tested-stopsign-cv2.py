@@ -29,8 +29,7 @@ while True:
         gray,
         scaleFactor=1.2,
         minNeighbors=5,
-        minSize=(30, 30),
-        flags=cv2.cv.CV_HAAR_SCALE_IMAGE
+        minSize=(30, 30)
     )
 
     #For each face that it found
