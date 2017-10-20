@@ -2,9 +2,12 @@ import cv2
 import sys
 
 #Importing the trained cascade file
-cascFile = "traffic.xml"
+'''cascFile = "traffic.xml"'''
+trafficCascFile = "traffic.xml"
+stopCascFile = "stop_class.xml"
 #Setting the cascade file
-stopCascade = cv2.CascadeClassifier(cascFile)
+stopCascade = cv2.CascadeClassifier(stopCascFile)
+trafficCascade = cv2.CascadeClassifier(trafficCascFile)
 
 #Set the device to capture video frames from
 #In this case, the webcam
@@ -25,21 +28,31 @@ while True:
     #Detect the faces using the cascade
     #First parameter -> the greyscale image
     #Second parameter -> the scale factor - change to avoid detecting the wrong things
-    faces = stopCascade.detectMultiScale(
+    stop = stopCascade.detectMultiScale(
         gray,
         scaleFactor=1.1,
         minNeighbors=5,
         minSize=(30, 30)
     )
 
-    #eyes = eyesCascade.detectMultiScale(gray, 1.3, 5)
+    traffic = trafficCascade.detectMultiScale(
+        gray,
+        scaleFactor=1.2,
+        minNeighbors=5,
+        minSize=(40,90)
+    )
 
-    #For each face that it found
-    for (x, y, w, h) in faces:
+    #For each stop sign that it found
+    for (x, y, w, h) in stop:
         #Create a green rectange around the face, with a border width of 2
-        cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+        cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
+        
         #Display text to show shtop sign
-        cv2.putText(frame, "GREEN", (x-10, y-10), cv2.FONT_HERSHEY_PLAIN, 3, (0,0,255), 2)
+        '''cv2.putText(frame, "GREEN", (x-10, y-10), cv2.FONT_HERSHEY_PLAIN, 3, (0,0,255), 2)'''
+
+    #For each traffic light is found
+    for (x, y, w, h) in traffic:
+        cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
     
     #Display the video stream with the squares draw on
     cv2.imshow('Video', frame)
