@@ -1,8 +1,26 @@
 import socket               
 import cv2
 import numpy as np
+import threading
 
 stopPresent = False
+greenPresent = False
+redPresent = False
+
+def stopDetection():
+    #Make the image public so that before these threaded tasks run the img is open to avoid having 3 of the same image being opened
+    stopCascade = cv2.CascadeClassifier('stop_class.xml')
+
+    img = cv2.imread('torecv.png')
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    stop = stopCascade.detectMultiScale(gray, 1.3, 5)
+
+    for (x,y,w,h) in stop:
+##        cv2.rectangle(img, (x,y), (x+w,y+h), (255, 0, 0), 2)
+        roi_gray = gray[y:y+h, x:x+w]
+        stopPresent = True
+
+
 
 s = socket.socket()         
 host = 'localhost' 
@@ -28,21 +46,31 @@ try:
 
     #Neural Network Predition START
     
-    #Stop Sign
-    stopCascade = cv2.CascadeClassifier('stop_class.xml')
-
+    #Traffic Light Threaded
+    trafficCascade = cv2.CascadeClassifier('traffic.xml')
     img = cv2.imread('torecv.png')
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    stop = stopCascade.detectMultiScale(gray, 1.3, 5)
+    traffic = trafficCascade.detectMultiScale(gray, 1.1, 2)
 
-    for (x,y,w,h) in stop:
-        cv2.rectangle(img, (x,y), (x+w,y+h), (255, 0, 0), 2)
+    for (x,y,w,h) in traffic:
+        print("Detected Traffic")
+        #cv2.rectangle(img, (x,y), (x+w, y+h), (255,0,0), 2)
         roi_gray = gray[y:y+h, x:x+w]
-        stopPresent = True
-        
-    print("STOP Sign Present", stopPresent)
-    
-    #Traffic Light Threaded
+
+        newgray = cv2.GaussianBlur(roi_gray, (41, 41), 0)
+        (minVal, maxVal, minLoc, maxLoc) = cv2.minMaxLoc(newgray)
+
+        print(maxLoc)
+        print(maxLoc[0])
+        print(maxLoc[1])
+
+        if maxLoc[1] >= 230:
+            print("Green Detected")
+            greenPresent = True
+        elif maxLoc[1] >= 100:
+            print("Red Detected")
+            redPresent = True
+            
     
 except KeyboardInterrupt:
     c.close()
