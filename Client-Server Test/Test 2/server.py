@@ -7,24 +7,33 @@ stopPresent = False
 greenPresent = False
 redPresent = False
 
-stopComplete = False
-trafficComplete = False
 
 def stopDetection():
     #Make the image public so that before these threaded tasks run the img is open to avoid having 3 of the same image being opened
+    global stopPresent
     stopCascade = cv2.CascadeClassifier('stop_class.xml')
-    stop = stopCascade.detectMultiScale(gray, 1.3, 5)
+    stop = stopCascade.detectMultiScale(gray,
+                                        scaleFactor=1.1,
+                                        minNeighbors=5,
+                                        minSize=(30,30)
+                                        )
 
     for (x,y,w,h) in stop:
         roi_gray = gray[y:y+h, x:x+w]
         stopPresent = True
 
-    stopComplete = True
     print("STOP complete")
 
 def trafficLightDetection():
+    global redPresent
+    global greenPresent
     trafficCascade = cv2.CascadeClassifier('traffic.xml')
-    traffic = trafficCascade.detectMultiScale(gray, 1.1, 2)
+    traffic = trafficCascade.detectMultiScale(gray, 1.3, 2)
+    #traffic = trafficCascade.detectMultiScale(gray,
+    #                                          scaleFactor=1.1,
+    #                                          minNeighbors=5,
+    #                                          minSize=(30,30)
+    #                                          )
 
     for (x,y,w,h) in traffic:
         print("Detected Traffic")
@@ -38,13 +47,14 @@ def trafficLightDetection():
         print(maxLoc[0])
         print(maxLoc[1])
 
-        if maxLoc[1] >= 230:
+        #Get height - divide by 2 then top half is red and bottom half is green
+
+        if maxLoc[1] >= 210:
             print("Green Detected")
             greenPresent = True
-        elif maxLoc[1] >= 100:
+        elif maxLoc[1] <= 160:
             print("Red Detected")
             redPresent = True
-    trafficComplete = True
     print("Traffic Complete")
     
 
@@ -68,8 +78,8 @@ try:
             l = c.recv(150000)
         f.close()
         print ("Done Receiving")
-        c.send(b'Thank you for connecting')
-        c.close()
+        #c.send(b'Thank you for connecting')
+        #c.close()
         break
 
     #Open and convert image to grey for threaded processes to use
@@ -84,8 +94,13 @@ try:
 
     stopThread.join()
     trafficThread.join()
+    
+    sendString = "STOP SIGN: " + str(stopPresent) + " Traffic Light: " + str(redPresent)
+    
+    c.send(str(sendString))
+    c.close()
 
-    print("ALL DONE!!")
+    
 
     
     #Neural Network Predition START
