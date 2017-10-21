@@ -7,30 +7,30 @@ stopPresent = False
 greenPresent = False
 redPresent = False
 
+stopComplete = False
+trafficComplete = False
+
 def stopDetection():
     #Make the image public so that before these threaded tasks run the img is open to avoid having 3 of the same image being opened
     stopCascade = cv2.CascadeClassifier('stop_class.xml')
-
-    img = cv2.imread('torecv.png')
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     stop = stopCascade.detectMultiScale(gray, 1.3, 5)
 
     for (x,y,w,h) in stop:
-##        cv2.rectangle(img, (x,y), (x+w,y+h), (255, 0, 0), 2)
         roi_gray = gray[y:y+h, x:x+w]
         stopPresent = True
 
+    stopComplete = True
+    print("STOP complete")
+
 def trafficLightDetection():
     trafficCascade = cv2.CascadeClassifier('traffic.xml')
-    img = cv2.imread('torecv.png')
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     traffic = trafficCascade.detectMultiScale(gray, 1.1, 2)
 
     for (x,y,w,h) in traffic:
         print("Detected Traffic")
-        #cv2.rectangle(img, (x,y), (x+w, y+h), (255,0,0), 2)
         roi_gray = gray[y:y+h, x:x+w]
 
+        #Detection
         newgray = cv2.GaussianBlur(roi_gray, (41, 41), 0)
         (minVal, maxVal, minLoc, maxLoc) = cv2.minMaxLoc(newgray)
 
@@ -44,11 +44,14 @@ def trafficLightDetection():
         elif maxLoc[1] >= 100:
             print("Red Detected")
             redPresent = True
+    trafficComplete = True
+    print("Traffic Complete")
+    
 
 
 
 s = socket.socket()         
-host = 'localhost' 
+host = '192.168.0.60' 
 port = 12347                 
 s.bind(('192.168.0.60', port))        
 f = open('torecv.png','wb')
@@ -69,6 +72,22 @@ try:
         c.close()
         break
 
+    #Open and convert image to grey for threaded processes to use
+    img = cv2.imread('torecv.png')
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    stopThread = threading.Thread(target=stopDetection)
+    trafficThread = threading.Thread(target=trafficLightDetection)
+
+    stopThread.start()
+    trafficThread.start()
+
+    stopThread.join()
+    trafficThread.join()
+
+    print("ALL DONE!!")
+
+    
     #Neural Network Predition START
             
     
