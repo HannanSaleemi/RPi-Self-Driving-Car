@@ -82,6 +82,11 @@ try:
         #c.close()
         break
 
+    #IMPORT TENSORFLOW and load the model now
+    #Maybe do this when initalising the server at the start
+    #Then THREAD the predicting process and join
+    #Combine all results and send across to the
+
     #Open and convert image to grey for threaded processes to use
     img = cv2.imread('torecv.png')
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
