@@ -1,1 +1,1 @@
-# Testing of sending live feed frame captures from client to server
+# Testing of sending static files across from client to server
