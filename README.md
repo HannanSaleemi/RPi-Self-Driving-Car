@@ -6,7 +6,7 @@ Checklist:
   - [X] Create ANN model - 98% accuracy
   - [X] Test ANN model
   - [X] Stop Sign Haar Cascade
-  - [ ] Traffic Light Haar Cascade
+  - [X] Traffic Light Haar Cascade
   - [ ] Create CNN model
   - [ ] Test CNN model
   - [ ] Test client-server with both new models
