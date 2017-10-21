@@ -13,7 +13,7 @@ try:
         print ("Receiving...")
         l = c.recv(150000)
         while (l):
-            print ("ReceivingS...")
+            print ("Receiving...")
             f.write(l)
             l = c.recv(150000)
         f.close()

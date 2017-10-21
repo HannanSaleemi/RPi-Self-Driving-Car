@@ -3,7 +3,7 @@ import socket
 s = socket.socket()         
                
 s.connect(('localhost', 12347))
-f = open('/Users/intern.mac/Desktop/RPi-Self-Driving-Car/Client-Server Test/tosend.png','rb')
+f = open('tosend.png','rb')
 print('Sending...')
 l = f.read(150000)
 while (l):
