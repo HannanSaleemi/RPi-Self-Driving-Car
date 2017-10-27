@@ -153,10 +153,12 @@ try:
                 for colnum in range(len(img_array[image_num][rownum])):
                     grey[image_num][rownum][colnum] = weightedAverage(img_array[image_num][rownum][colnum])
     
+##    print(grey.shape)
+##    print(grey)
 
     stopThread = threading.Thread(target=stopDetection)
     trafficThread = threading.Thread(target=trafficLightDetection)
-    nnThread = threading.Thread(target=nnPrediction, args=(grey[0]))
+    nnThread = threading.Thread(target=nnPrediction, args=(grey))
 
     stopThread.start()
     trafficThread.start()
@@ -165,12 +167,14 @@ try:
     stopThread.join()
     trafficThread.join()
     nnThread.join()
+
     
-    sendString = "STOP SIGN: " + str(stopPresent) + " Traffic Light: " + str(redPresent)
-    print(pred_result)
-    from time import sleep
-    sleep(10)
-    print(pred_result)
+    
+    sendString = "STOP SIGN: " + str(stopPresent) + " Traffic Light: " + str(redPresent) + "Prediction: " + str(pred_result)
+##    print(pred_result)
+##    from time import sleep
+##    sleep(10)
+##    print(pred_result)
     
     c.send(str(sendString))
     c.close()
