@@ -1,8 +1,8 @@
 ### DATA-PREPROCESSING CLASS ###
 
 ####### NOTES/TODO #######
-# - Change to remove global and add self to all global variables
-# - Continue with the program
+# - Need to replace image dimensions with variables
+# - Need to let the user enter the width and height of the images
 
 # [START IMPORTS] #
 import numpy as np
@@ -21,7 +21,8 @@ class DatasetProcessing(object):
         self.numOfImgs = numofimgs
         self.typeOfImages = typeOfImg
         self.image_list = []
-        self.image_shape = [18,22]
+        self.image_shape = [80,40]
+        self.flattenedImageDimensions = 3200
         self.grey = np.zeros((self.numOfImgs, self.image_shape[0], self.image_shape[1]))
         self.image_labels = np.zeros(shape=(self.numOfImgs, 3))
         self.flatten_size = (self.image_shape[0])*(self.image_shape[1])
@@ -43,7 +44,7 @@ class DatasetProcessing(object):
         for filename in glob.glob(path+'*.png'):
             img_count += 1
             image = misc.imread(path+'trainframe ('+str(img_count)+').png')
-            image_resized = resize(image, (18,22), mode='reflect')
+            image_resized = resize(image, (80,40), mode='reflect')
             self.image_list.append(image_resized)
         
         print("STAGE 1 COMPLETE")
@@ -95,9 +96,9 @@ class DatasetProcessing(object):
         print("Length of image array", str(len(self.image_list)))
         
     def showImg(self, img_num):
-        image = self.image_list[img_num].reshape(1,396)
+        image = self.image_list[img_num].reshape(1,3200)
         print(image.shape)
-        image = self.image_list[img_num].reshape(18,22)
+        image = self.image_list[img_num].reshape(80,40)
         print(image.shape)
         plt.imshow(image, cmap='Greys')
         plt.show()
