@@ -1,1 +1,0 @@
-Apply dropout to the model to avoid memorizing the data as this is happening
