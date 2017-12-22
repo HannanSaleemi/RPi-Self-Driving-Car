@@ -35,6 +35,8 @@ l_lbl = l_images.getLblArray()
 r_array = r_images.getImgArray()
 r_lbl = r_images.getLblArray()
 
+print(type(f_array))
+
 #Concatenate all arrays
 
 all_images_array = np.concatenate((f_array, l_array, r_array), axis=0)
