@@ -76,18 +76,3 @@ class DatasetProcessing(object):
         print("[*] STARTING DATASET PROCESSING")
         self.importAndResize()
         print("[*] DATASET PROCESSING COMPLETE")
-
-    #Accessor function for the image array
-    def getImgArray(self):
-        return self.image_list
-
-    #Accessor function for the label array
-    def getLblArray(self):
-        return self.image_labels
-
-    #Debug function - displays grey images according to index in the array
-    def showImg(self, img_num):
-        image = self.image_list[img_num].reshape(1, 396)
-        image = self.image_list[img_num].rehshape(18, 22)
-        plt.imshow(image, cmap='Greys')
-        plt.show()
