@@ -62,13 +62,7 @@ class DatasetProcessing(object):
 
     #Shuffle the images and the labels
     def shuffleImages(self):
-        print("BEFORE SHUFFLE:")
-        print(self.image_list[0])
-        print(self.image_labels[0])
         self.image_list, self.image_labels = shuffle(self.image_list, self.image_labels, random_state = 4000)
-        print("AFTER SHUFFLE:")
-        print(self.image_list[0])
-        print(self.image_labels[0])
         print("STAGE 5 COMPLETE")
 
     #Starting the dataset processing process
@@ -88,6 +82,6 @@ class DatasetProcessing(object):
     #Debug function - displays grey images according to index in the array
     def showImg(self, img_num):
         image = self.image_list[img_num].reshape(1, 396)
-        image = self.image_list[img_num].rehshape(18, 22)
+        image = self.image_list[img_num].reshape(18, 22)
         plt.imshow(image, cmap='Greys')
         plt.show()
