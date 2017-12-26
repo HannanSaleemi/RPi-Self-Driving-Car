@@ -99,7 +99,7 @@ y = tf.placeholder('float', [None, n_classes])
 pred = multilayer_perceptron(x, weights, biases)
 
 #Define cost and optimisation functions
-cost = tf.reduce_mean(tf.nn.softmax_corss_entropy_with_logits(logits=pred, labels=y))
+cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=pred, labels=y))
 optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
 
 ##END DEFINING MODEL PARAMETERS##
@@ -108,6 +108,92 @@ optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
 
 #Initialise the session, variables and model saver method
 sess = tf.InteractiveSession()
-init = tf.global_variables_initialiser()
+init = tf.global_variables_initializer()
 saver = tf.train.Saver()
 sess.run(init)
+
+#Traing the model on the images
+start_batch = 0
+end_batch = batch_size
+
+#Main training loop (epoch - one time over each image)
+for epoch in range(training_epochs):
+
+    #Resetting the average for each epoch
+    avg_cost = 0
+
+    #Defining the total batch
+    total_batch = int(n_samples/batch_size)
+
+    #For each batch of images
+    for i in range(total_batch):
+
+        #Get the next batch
+        batch_x = image_array[start_batch:end_batch]
+        batch_y = image_labels[start_batch:end_batch]
+
+        #Optimisation and loss
+        _, c = sess.run([optimizer, cost], feed_dict={x:batch_x, y:batch_y})
+
+        avg_cost += c/total_batch
+
+        #Get the next batch start and end values
+        start_batch += batch_size
+        end_batch += batch_size
+
+    #Reset batch values
+    start_batch = 0
+    end_batch = batch_size
+
+    #Output epoch and cost - helps to see if model is improving in accuracy over epochs
+    print("Epoch {} Cost {:.4f}".format(epoch+1, avg_cost))
+print("Model has completed {} epochs of training".format(training_epochs))
+
+#Saving the model to file
+save_path = saver.save(sess, "model.ckpt")
+print("[*] Model saved to file")
+
+##END TRAINING##
+
+##MODEL EVALUATION##
+
+#Training set accuracy
+correct_predictions = tf.equal(tf.argmax(pred, 1), tf.argmax(y, 1))
+correct_predictions = tf.cast(correct_predictions, 'float')
+accuracy = tf.reduce_mean(correct_predictions)
+print(accuracy.eval({x: image_array, y: image_labels}))
+
+#Testing set accuracy
+#Forward images and labels
+test_f_images = DataPreProcessing.DatasetProcessing("forward", 1000,
+        "/Volumes/TRANSCEND/RPi-Self-Driving-Car/cardataset/Testing/Forward/")
+test_f_images.generateDataset()
+test_f_array = test_f_images.getImgArray()
+test_f_lbl = test_f_images.getLblArray()
+
+#Left images and labels
+test_l_images = DataPreProcessing.DatasetProcessing("left", 1000,
+        "/Volumes/TRANSCEND/RPi-Self-Driving-Car/cardataset/Testing/Left/")
+test_l_images.generateDataset()
+test_l_array = test_l_images.getImgArray()
+test_l_lbl = test_l_images.getLblArray()
+
+#Right image and labels
+test_r_images = DataPreProcessing.DatasetProcessing("right", 1000,
+        "/Volumes/TRANSCEND/RPi-Self-Driving-Car/cardataset/Testing/Right/")
+test_r_images.generateDataset()
+test_r_array = test_r_images.getImgArray()
+test_r_lbl = test_r_images.getLblArray()
+
+#Concatenate images and labels
+test_images = np.concatenate((test_f_array, test_l_array, test_r_array), axis=0)
+test_labels = np.concatenate((test_f_lbl, test_l_lbl, test_r_lbl))
+
+#Shuffle images and labels
+test_images_array, test_labels_array = shuffle(test_images, test_labels, random_state=9000)
+
+#Getting the accuracy
+test_predictions = tf.equal(tf.argmax(pred, 1), tf.argmax(y, 1))
+test_predictions = tf.cast(test_predictions, 'float')
+test_accuracy = tf.reduce_mean(test_predictions)
+print(test_accuracy.eval({x: test_images_array, y: test_labels_array}))
