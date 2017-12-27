@@ -21,12 +21,17 @@ class DatasetProcessing(object):
     #Import and Resize the images
     def importAndResize(self):
         path = self.pathToImgs
+        imagesExist = False
         for filename in glob.glob(path+'*.png'):
+            imagesExist = True
             image = misc.imread(filename)
             image_resized = resize(image, (18,22), mode='reflect')
             self.image_list.append(image_resized)
-        print("STAGE 1 COMPLETE")
-        self.convertToGreyscale()
+        if imagesExist == False:
+            print("STAGE 1 FAILED - NO IMAGES EXIST IN FILE")
+        else:
+            print("STAGE 1 COMPLETE")
+            self.convertToGreyscale()
 
     #Weighted Average Conversion
     def weightedAverage(self, pixel):
@@ -69,7 +74,7 @@ class DatasetProcessing(object):
     def generateDataset(self):
         print("[*] STARTING DATASET PROCESSING")
         self.importAndResize()
-        print("[*] DATASET PROCESSING COMPLETE")
+        print("[*] DATASET PROCESSING EXITED")
 
     #Accessor function for the image array
     def getImgArray(self):

@@ -21,12 +21,17 @@ class DatasetProcessing(object):
     #Import and Resize the images
     def importAndResize(self):
         path = self.pathToImgs
+        imagesExist = False
         for filename in glob.glob(path+'*.png'):
+            imagesExist = True
             image = misc.imread(filename)
             image_resized = resize(image, (18,22), mode='reflect')
             self.image_list.append(image_resized)
-        print("STAGE 1 COMPLETE")
-        self.convertToGreyscale()
+        if imagesExist == False:
+            print("STAGE 1 FAILED - NO IMAGES EXIST IN FILE")
+        else:
+            print("STAGE 1 COMPLETE")
+            self.convertToGreyscale()
 
     #Weighted Average Conversion
     def weightedAverage(self, pixel):
@@ -62,17 +67,26 @@ class DatasetProcessing(object):
 
     #Shuffle the images and the labels
     def shuffleImages(self):
-        print("BEFORE SHUFFLE:")
-        print(self.image_list[0])
-        print(self.image_labels[0])
         self.image_list, self.image_labels = shuffle(self.image_list, self.image_labels, random_state = 4000)
-        print("AFTER SHUFFLE:")
-        print(self.image_list[0])
-        print(self.image_labels[0])
         print("STAGE 5 COMPLETE")
 
     #Starting the dataset processing process
     def generateDataset(self):
         print("[*] STARTING DATASET PROCESSING")
         self.importAndResize()
-        print("[*] DATASET PROCESSING COMPLETE")
+        print("[*] DATASET PROCESSING EXITED")
+
+    #Accessor function for the image array
+    def getImgArray(self):
+        return self.image_list
+
+    #Accessor function for the label array
+    def getLblArray(self):
+        return self.image_labels
+
+    #Debug function - displays grey images according to index in the array
+    def showImg(self, img_num):
+        image = self.image_list[img_num].reshape(1, 396)
+        image = self.image_list[img_num].reshape(18, 22)
+        plt.imshow(image, cmap='Greys')
+        plt.show()

@@ -7,13 +7,11 @@ forward = DataPreProcessing.DatasetProcessing("forward", 3000,
 #Calling the starter method
 forward.generateDataset()
 
-#Retreiving the image array
-forward.getImgArray()
+#Retreiving the image and labels array
+i_array = forward.getImgArray()
+l_array = forward.getLblArray
 
-#Retreiving the label array
-forward.getLblArray
-
-
+print(i_array[1])
 
 
 
