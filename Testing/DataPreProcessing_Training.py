@@ -1,7 +1,7 @@
 import DataPreProcessing
 
 #Creating the instance
-forward = DataPreProcessing.DatasetProcessing("forward", 3000,
+forward = DataPreProcessing.DatasetProcessing("forward", "Hello",
         "/Volumes/TRANSCEND/RPi-Self-Driving-Car/cardataset/Training/Forward/")
 
 #Calling the starter method
@@ -11,7 +11,7 @@ forward.generateDataset()
 i_array = forward.getImgArray()
 l_array = forward.getLblArray
 
-print(i_array[1])
+print(i_array[4000])
 
 
 

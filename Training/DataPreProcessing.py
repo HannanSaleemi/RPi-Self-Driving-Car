@@ -22,14 +22,20 @@ class DatasetProcessing(object):
     def importAndResize(self):
         path = self.pathToImgs
         imagesExist = False
+        errorEncountered = False
         for filename in glob.glob(path+'*.png'):
             imagesExist = True
             image = misc.imread(filename)
             image_resized = resize(image, (18,22), mode='reflect')
             self.image_list.append(image_resized)
+
+        if self.image_list != self.numOfImgs:
+            errorEncountered = True
+            print("STAGE 1 FAILED - 'numOfImgs' parameter doesn't match number of images in the folder.")
         if imagesExist == False:
+            errorEncountered = True
             print("STAGE 1 FAILED - NO IMAGES EXIST IN FILE")
-        else:
+        if errorEncountered == False:
             print("STAGE 1 COMPLETE")
             self.convertToGreyscale()
 
