@@ -29,7 +29,7 @@ class DatasetProcessing(object):
             image_resized = resize(image, (18,22), mode='reflect')
             self.image_list.append(image_resized)
 
-        if self.image_list != self.numOfImgs:
+        if len(self.image_list) != self.numOfImgs:
             errorEncountered = True
             print("STAGE 1 FAILED - 'numOfImgs' parameter doesn't match number of images in the folder.")
         if imagesExist == False:
@@ -66,6 +66,9 @@ class DatasetProcessing(object):
             label = 1
         elif self.typeOfImages.lower() == "right":
             label = 2
+        else:
+            print("STAGE 4 FAILED - INCORRECT LABEL ENTERED")
+            return None
         for i in range(self.numOfImgs):
             self.image_labels[i][label] = float(1)
         print("STAGE 4 COMPLETE")
