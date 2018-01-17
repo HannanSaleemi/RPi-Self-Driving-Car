@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 class DatasetProcessing(object):
 
     #Initaliser method
-    def __init__(self, typeOfImg="None", numofimgs="None", pathtoimgs="None"):
+    def __init__(self, typeOfImg="None", numofimgs=0, pathtoimgs="None"):
         self.pathToImgs = pathtoimgs
         self.numOfImgs = numofimgs
         self.typeOfImages = typeOfImg
