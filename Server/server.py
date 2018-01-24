@@ -4,20 +4,25 @@ import matplotlib.pyplot as plt
 import DataPreProcessing
 import threading
 import tensorflow as tf
+from scipy import misc
+import cv2
 
 #Resul variables initalisation
+lightColor = ""
 stopPresent = False
-greenPresent = False
-redPresent = False
 pred_result = [0]
 
 #TCP Recieve method
-def recv_into(arr, source):
-    view = memoryview(arr).cast('B')
-    while len(view):
-        nrecv = source.recv_into(view)
-        view = view[nrecv:]
-    print('[*] Successfully Received Image!')
+def recv_img(conn):
+    while True:
+        f = open('img.png', 'wb')
+        print("[*] Recieving...")
+        l = conn.recv(150000)
+        while (l):
+            f.write(l)
+            l = conn.recv(150000)
+        print("[*] Image Successfully Recieved")
+        break
 
 #Neural Network Function
 def multilayer_perceptron(x, weights, biases):
@@ -65,19 +70,44 @@ def directionPrediction(image):
 def stopDetection():
     global stopPresent
     stopCascade = cv2.CascadeClassifier('stop_class.xml')
-    stop = stopCascade.detectMultiScale(img,
+    stop = stopCascade.detectMultiScale(grey,
                                         scaleFactor=1.1,
-                                        minNeighbors=5,
-                                        minSize=(30,30)
+                                        minNeighbors=2
                                         )
     for (x, y, w, h) in stop:
         stopPresent = True
-    print("STOP Detection Complete")
+    print("[*] STOP Detection Complete")
+    print("[*] STOP sign present:", stopPresent)
+
+def trafficLightDetection():
+    global lightColor
+    trafficCascade = cv2.CascadeClassifier('traffic.xml')
+    traffic = trafficCascade.detectMultiScale(grey, 1.1, 2)
+
+    for (x,y,w,h) in traffic:
+        print("[*] Detected Traffic Light")
+        roi_gray = grey[y:y+h, x:x+w]
+
+        blurred = cv2.GaussianBlur(roi_gray, (41, 41), 0)
+        (minVal, maxVal, minLoc, maxLoc) = cv2.minMaxLoc(blurred)
+
+        print(maxLoc)
+        print(maxLoc[0])
+        print(maxLoc[1])
+
+        if maxLoc[1] >= 210:
+            print("[*] Green Detected")
+            lightColor = "Green"
+        elif maxLoc[1] <= 160:
+            print("[*] Red Detected")
+            lightColor = "Red"
+        print("[*] Traffic Light Detected")
+    print("[*] Traffic Light Detection Complete")
 
 
 #Initalising the TCP Connection
 s = socket(AF_INET, SOCK_STREAM)
-s.bind(('localhost', 25000))
+s.bind(('192.168.0.60', 25000))
 print("[*] Waiting for connection...")
 s.listen(1)
 conn, a = s.accept()
@@ -86,22 +116,33 @@ print("[*] Connected to client")
 try:
     while True:
         #Creating the recieving array
-        recieved_array = np.zeros((36, 44, 3))
-        recv_into(recieved_array, conn)
-        print("[*] Image Array Recieved")
+        recieved_array = np.zeros((240, 320, 3))
+        recv_img(conn)
+        img = cv2.imread('img.png')
 
-        #Image Greyscale conversion
+        #Image downsize Greyscale conversion - directional
         img_converter = DataPreProcessing.DatasetProcessing()
-        img = img_converter.getSingleImage(recieved_array)
+        downsized_img = img_converter.getSingleImage(img)
+
+        #Image greyscale only - stop sign and traffic light
+        grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
         #Initalise threads
-        directionThread = threading.Thread(target=directionPrediction, args=(img))
+        directionThread = threading.Thread(target=directionPrediction, args=(downsized_img))
+        stopThread = threading.Thread(target=stopDetection)
+        trafficThread = threading.Thread(target=trafficLightDetection)
 
         #Start the threads
         directionThread.start()
+        stopThread.start()
+        trafficThread.start()
 
         #Join the queue - so they all wait to finish before sending the result
         directionThread.join()
+        stopThread.join()
+        trafficThread.join()
+
+        break
 
 except KeyboardInterrupt:
     print("[*] Connection being closed...")
