@@ -16,7 +16,7 @@ def stopDetection(img):
     stopCascade = cv2.CascadeClassifier('stop_class.xml')
     stop = stopCascade.detectMultiScale(img,
                                         scaleFactor=1.1,
-                                        minNeighbors=5
+                                        minNeighbors=2
                                         )
     for (x, y, w, h) in stop:
         stopPresent = True
@@ -28,7 +28,7 @@ def stopDetection(img):
 #recv_img = misc.imread('/Volumes/TRANSCEND/RPi-Self-Driving-Car/Testing/STOP-testing/image.png')
 
 #img = np.array(recv_img, dtype='uint8')
-img = cv2.imread('img.png')
+img = cv2.imread('/Volumes/TRANSCEND/RPi-Self-Driving-Car/Testing/Traffic-Light-Testing/img.png')
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 #image_resized = resize(gray, (18,22), mode='reflect')
 stopDetection(gray)

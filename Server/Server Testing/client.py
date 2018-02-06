@@ -4,18 +4,16 @@ import numpy as np
 from scipy import misc
 from skimage.transform import resize
 
-def send_from(arr, dest):
-    view = memoryview(arr).cast('B')
-    while len(view):
-        nsent = dest.send(view)
-        view = view[nsent:]
-    print("[* Image Successfully Sent]")
+def send_img(dest):
+    f = open('img2.png', 'rb')
+    print("[*] Sending Image")
+    l = f.read(150000)
+    while (l):
+        dest.send(l)
+        l = f.read(150000)
+    print("[*] Image successfully sent")
 
 c = socket(AF_INET, SOCK_STREAM)
 c.connect(('localhost', 25000))
 
-img = misc.imread('inputimg.png')
-print(img)
-img = resize(img, (36, 44))
-
-send_from(img, c)
+send_img(c)

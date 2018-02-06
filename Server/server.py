@@ -6,23 +6,49 @@ import threading
 import tensorflow as tf
 from scipy import misc
 import cv2
+from time import sleep
 
 #Resul variables initalisation
 lightColor = ""
-stopPresent = False
+stopPresent = "F"
 pred_result = [0]
+results_array = np.array(["N", "N", "N"])
 
 #TCP Recieve method
 def recv_img(conn):
-    while True:
-        f = open('img.png', 'wb')
-        print("[*] Recieving...")
+    f = open('img.png', 'wb')
+    print("[*] Recieving...")
+    l = conn.recv(150000)
+    while (l):
+        f.write(l)
         l = conn.recv(150000)
-        while (l):
-            f.write(l)
-            l = conn.recv(150000)
-        print("[*] Image Successfully Recieved")
-        break
+    print("[*] Image Successfully Recieved")
+
+
+#s.bind(('localhost', 25000))
+#s.bind(('10.124.136.32', 25000))
+
+#Initalise a new connection to the server
+def init_new_conn():
+    s = socket(AF_INET, SOCK_STREAM)
+    s.bind(('192.168.0.60', 25000))
+    print("[*] Waiting for connection...")
+    s.listen(5)
+    return s
+
+#Establish a link with client
+def listen_new_conn(s):
+    conn, a = s.accept()
+    print("[*] Connected to Client!")
+    return conn
+
+#TCP Send Results
+def send_results(directionResult, trafficResult, stopResult, dest):
+    completeResult = str(directionResult) + str(trafficResult) + str(stopResult)
+    print("[*] Sending", completeResult)
+    completeResult = str.encode(completeResult)
+    dest.send(completeResult)
+    print("[*] Result sent")
 
 #Neural Network Function
 def multilayer_perceptron(x, weights, biases):
@@ -75,7 +101,7 @@ def stopDetection():
                                         minNeighbors=2
                                         )
     for (x, y, w, h) in stop:
-        stopPresent = True
+        stopPresent = "T"
     print("[*] STOP Detection Complete")
     print("[*] STOP sign present:", stopPresent)
 
@@ -95,29 +121,37 @@ def trafficLightDetection():
         print(maxLoc[0])
         print(maxLoc[1])
 
-        if maxLoc[1] >= 210:
+        #Not working well - replace with y + (height / 2) then the usual greater and less than
+
+        if maxLoc[1] >= 35:
             print("[*] Green Detected")
-            lightColor = "Green"
-        elif maxLoc[1] <= 160:
+            lightColor = "G"
+        elif maxLoc[1] <= 30:
             print("[*] Red Detected")
-            lightColor = "Red"
+            lightColor = "R"
+        else:
+            lightColor = "N"
         print("[*] Traffic Light Detected")
     print("[*] Traffic Light Detection Complete")
 
 
 #Initalising the TCP Connection
-s = socket(AF_INET, SOCK_STREAM)
-s.bind(('192.168.0.60', 25000))
-print("[*] Waiting for connection...")
-s.listen(1)
-conn, a = s.accept()
-print("[*] Connected to client")
+s = init_new_conn()
 
 try:
     while True:
+        #Accept connections from client
+        conn = listen_new_conn(s)
+
+        #Variable reset
+        stopPresent = "F"
+        lightColor = "N"
+        pred_result = [0]
+
         #Creating the recieving array
         recieved_array = np.zeros((240, 320, 3))
         recv_img(conn)
+        conn.close()
         img = cv2.imread('img.png')
 
         #Image downsize Greyscale conversion - directional
@@ -141,6 +175,11 @@ try:
         directionThread.join()
         stopThread.join()
         trafficThread.join()
+
+        #Results sending
+        conn = listen_new_conn(s)
+        send_results(pred_result[0], lightColor, stopPresent, conn)
+        conn.close()
 
         break
 
