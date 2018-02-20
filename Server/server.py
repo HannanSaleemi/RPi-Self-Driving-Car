@@ -32,6 +32,7 @@ def recv_img(conn):
 def init_new_conn():
     s = socket(AF_INET, SOCK_STREAM)
     s.bind(('192.168.0.60', 25000))
+    #s.bind(('10.124.144.232', 25000))
     print("[*] Waiting for connection...")
     s.listen(5)
     return s
@@ -138,6 +139,8 @@ def trafficLightDetection():
 #Initalising the TCP Connection
 s = init_new_conn()
 
+import time
+
 try:
     while True:
         #Accept connections from client
@@ -152,6 +155,7 @@ try:
         recieved_array = np.zeros((240, 320, 3))
         recv_img(conn)
         conn.close()
+        start = time.time()
         img = cv2.imread('img.png')
 
         #Image downsize Greyscale conversion - directional
@@ -176,10 +180,14 @@ try:
         stopThread.join()
         trafficThread.join()
 
+        end = time.time()
+
         #Results sending
         conn = listen_new_conn(s)
         send_results(pred_result[0], lightColor, stopPresent, conn)
         conn.close()
+
+        print(end - start)
 
         break
 
