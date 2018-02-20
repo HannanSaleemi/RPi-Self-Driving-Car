@@ -8,3 +8,25 @@ Raspberry pi based RC Self-Driving Car using Python, Tenserflow and OpenCV
     - Training Accuracy - 99.9%
     - Testing Accuracy - 89.7%
     - Model Saved to disk
+
+## **Iteration 2**
+  - [X] Client 1 (Pi)
+    - Send Snapshot
+    - Recieve result
+    - Send result to Arduino
+  - [X] Server
+    - Receive Image
+    - Generate Prediction
+      - Directional Prediction
+      - Traffic Light Detection
+      - STOP sign detection
+    - Send results to Arduino (Client 2)
+
+## **Iteration 3**
+  - [X] Client 1
+    - Send result to Client 2
+  - [X] Client 2
+    - Recieve result
+    - Parse:
+      - Get distance from ultrasonic sensor
+      - Execute correct driving function
