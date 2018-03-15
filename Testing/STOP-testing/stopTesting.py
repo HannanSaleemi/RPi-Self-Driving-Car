@@ -1,4 +1,3 @@
-
 import cv2
 import DataPreProcessing
 import numpy as np
@@ -28,7 +27,7 @@ def stopDetection(img):
 #recv_img = misc.imread('/Volumes/TRANSCEND/RPi-Self-Driving-Car/Testing/STOP-testing/image.png')
 
 #img = np.array(recv_img, dtype='uint8')
-img = cv2.imread('/Volumes/TRANSCEND/RPi-Self-Driving-Car/Testing/Traffic-Light-Testing/img.png')
+img = cv2.imread('/Volumes/TRANSCEND/RPi-Self-Driving-Car/Testing/Traffic-Light-Testing/stopactual.png')
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 #image_resized = resize(gray, (18,22), mode='reflect')
 stopDetection(gray)

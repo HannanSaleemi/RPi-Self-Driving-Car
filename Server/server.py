@@ -7,12 +7,28 @@ import tensorflow as tf
 from scipy import misc
 import cv2
 from time import sleep
+import time
 
-#Resul variables initalisation
+#Result variables initalisation
 lightColor = ""
 stopPresent = "F"
 pred_result = [0]
 results_array = np.array(["N", "N", "N"])
+
+#Stop Sign Detection Variables and constants
+stop_distance = 100
+stop_start = 0
+stop_finish = 0
+stop_time = 0
+drive_time_after_stop = 0
+stop_sign_active = True
+stop_flag = False
+focal = 318.88
+stop_actualWidth = 4.5
+
+#Traffic Lights variables
+traffic_actualWidth = 3.9
+traffic_distance = 100
 
 #TCP Recieve method
 def recv_img(conn):
@@ -32,7 +48,7 @@ def recv_img(conn):
 def init_new_conn():
     s = socket(AF_INET, SOCK_STREAM)
     s.bind(('192.168.0.60', 25000))
-    #s.bind(('10.124.144.232', 25000))
+    #s.bind(('10.124.168.149', 25000))
     print("[*] Waiting for connection...")
     s.listen(5)
     return s
@@ -95,51 +111,90 @@ def directionPrediction(image):
 
 #STOP Sign Detection
 def stopDetection():
-    global stopPresent
+    global stopPresent, stop_sign_active, stop_flag, stop_start, stop_finish, stop_time, drive_time_after_stop
     stopCascade = cv2.CascadeClassifier('stop_class.xml')
     stop = stopCascade.detectMultiScale(grey,
                                         scaleFactor=1.1,
                                         minNeighbors=2
                                         )
     for (x, y, w, h) in stop:
-        stopPresent = "T"
+        #Calculate Distance
+        stop_distance = (stop_actualWidth * focal) / w
+        print("Distance:", stop_distance)
+
+        #If distance is less than 25cm
+        if 0 < stop_distance < 30 and stop_sign_active:
+            print("STOP SIGN AHEAD")
+            stopPresent = "T"
+
+            #Storing the first time to stop the vehicle
+            if stop_flag is False:
+                stop_start = cv2.getTickCount()
+                stop_flag = True
+
+            #Each loop a new time is recorded to compare against start time
+            stop_finish = cv2.getTickCount()
+            stop_time = (stop_finish - stop_start) / cv2.getTickFrequency()
+            print("STOP Halted for:", stop_time)
+
+            #If 5 seconds are up, begin to drive and set ignore flags
+            if stop_time > 5:
+                print("5 Seconds up, continue driving...")
+                stop_flag = False
+                stop_sign_active = False
+
+        else:
+            #Continue with driving
+            stopPresent = "F"
+            stop_start = cv2.getTickCount()
+            stop_distance = 100
+            if stop_sign_active is False:
+                drive_time_after_stop = (stop_start - stop_finish) / cv2.getTickFrequency()
+                if drive_time_after_stop > 15:
+                    stop_sign_active = True
+
     print("[*] STOP Detection Complete")
     print("[*] STOP sign present:", stopPresent)
 
 def trafficLightDetection():
+    #Not working well - replace with y + (height / 2) then the usual greater and less than
     global lightColor
     trafficCascade = cv2.CascadeClassifier('traffic.xml')
     traffic = trafficCascade.detectMultiScale(grey, 1.1, 2)
 
     for (x,y,w,h) in traffic:
         print("[*] Detected Traffic Light")
-        roi_gray = grey[y:y+h, x:x+w]
+        roi_gray = grey[y:y+h-20, x:x+w]
 
+        #Blur to remove any noise
         blurred = cv2.GaussianBlur(roi_gray, (41, 41), 0)
         (minVal, maxVal, minLoc, maxLoc) = cv2.minMaxLoc(blurred)
 
-        print(maxLoc)
-        print(maxLoc[0])
+        #Coordinates of the brightest light
         print(maxLoc[1])
 
-        #Not working well - replace with y + (height / 2) then the usual greater and less than
+        #Get Distance
+        traffic_distance = (traffic_actualWidth * focal) / w
+        print("Distance:", traffic_distance)
 
-        if maxLoc[1] >= 35:
-            print("[*] Green Detected")
-            lightColor = "G"
-        elif maxLoc[1] <= 30:
-            print("[*] Red Detected")
-            lightColor = "R"
+        #If close enough - Identify the light color
+        if 0 < traffic_distance < 40:
+            if maxLoc[1] >= 40:#used to be 35
+                print("[*] Green Detected")
+                lightColor = "G"
+            elif maxLoc[1] <= 40:#used to br 30
+                print("[*] Red Detected")
+                lightColor = "R"
         else:
+            print("[*] Traffic Light Not Close Enough")
             lightColor = "N"
+
         print("[*] Traffic Light Detected")
     print("[*] Traffic Light Detection Complete")
 
 
 #Initalising the TCP Connection
 s = init_new_conn()
-
-import time
 
 try:
     while True:
@@ -188,8 +243,6 @@ try:
         conn.close()
 
         print(end - start)
-
-        break
 
 except KeyboardInterrupt:
     print("[*] Connection being closed...")
