@@ -40,10 +40,6 @@ def recv_img(conn):
         l = conn.recv(150000)
     print("[*] Image Successfully Recieved")
 
-
-#s.bind(('localhost', 25000))
-#s.bind(('10.124.136.32', 25000))
-
 #Initalise a new connection to the server
 def init_new_conn():
     s = socket(AF_INET, SOCK_STREAM)
@@ -100,6 +96,7 @@ def directionPrediction(image):
     recv_image = np.zeros(shape=396)
     recv_image = image.reshape(1, 396)
     init = tf.global_variables_initializer()
+    #Predict
     with tf.Session() as sess:
         sess.run(init)
         saver = tf.train.Saver()
@@ -111,7 +108,8 @@ def directionPrediction(image):
 
 #STOP Sign Detection
 def stopDetection():
-    global stopPresent, stop_sign_active, stop_flag, stop_start, stop_finish, stop_time, drive_time_after_stop
+    global stopPresent, stop_sign_active, stop_flag
+    global stop_start, stop_finish, stop_time, drive_time_after_stop
     stopCascade = cv2.CascadeClassifier('stop_class.xml')
     stop = stopCascade.detectMultiScale(grey,
                                         scaleFactor=1.1,
@@ -157,7 +155,6 @@ def stopDetection():
     print("[*] STOP sign present:", stopPresent)
 
 def trafficLightDetection():
-    #Not working well - replace with y + (height / 2) then the usual greater and less than
     global lightColor
     trafficCascade = cv2.CascadeClassifier('traffic.xml')
     traffic = trafficCascade.detectMultiScale(grey, 1.1, 2)

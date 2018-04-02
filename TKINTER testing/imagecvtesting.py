@@ -19,6 +19,7 @@ imgtk = ImageTk.PhotoImage(image=im)
 
 #Put it in the display windows
 tkinter.Label(root, image=imgtk).pack()
+tkinter.Label(root, text="Hello").pack()
 
 #Start the GUI
 root.mainloop()
