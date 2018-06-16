@@ -1,6 +1,7 @@
 # RPi-Self-Driving-Car
 
-**This Project was for my Computer Science Coursework~**
+**This Project was for my Computer Science Coursework**
+**Yes I know the codebase is a mess.**
 **It is no longer being maintained. I will create a better version in the future.**
 
 Raspberry pi based RC Self-Driving Car using Python, Tenserflow and OpenCV
