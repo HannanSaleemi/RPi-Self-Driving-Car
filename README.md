@@ -34,3 +34,6 @@ Raspberry pi based RC Self-Driving Car using Python, Tenserflow and OpenCV
     - Parse:
       - Get distance from ultrasonic sensor
       - Execute correct driving function
+
+
+Mac (Server) -> Pi (Client 1) -> Arduino (Client 2)
